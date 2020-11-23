@@ -1,0 +1,7 @@
+/.metadata/
+/mysql/
+/Servers/
+.settings/
+./target/
+./.classpath
+./.project
