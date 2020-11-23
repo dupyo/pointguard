@@ -1,8 +1,8 @@
 /.metadata/
 /Servers/
-./SpringPRJ/.settings/
-./SpringPRJ/target/
-./SpringPRJ/.classpath
-./SpringPRJ/.project
-./LICENSE
-./README.md
+/SpringPRJ/.settings/
+/SpringPRJ/target/
+/SpringPRJ/.classpath
+/SpringPRJ/.project
+/LICENSE
+/README.md
