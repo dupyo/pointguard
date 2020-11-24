@@ -42,24 +42,24 @@ public class SensorController {
 		
 		log.info("codata : " + jsonObj.get("CoData"));
 		
-		//�엫�떆 �뒿�룄 媛�
+		//임시 습도 값
 		double HmdData = 10;
 		double HmdpData = 100;
 		
-		//�엫�떆 �룞�씪 媛�利앹튂
+		//임시 동일 가증치
 		double co2_weight = 0.34;
 		double temp_weight = 0.33;
 		double hmd_weight = 0.33;
 		
-		/* 媛�以묒튂瑜� 議곌굔�쓣 二쇨퀬 �븳 媛�吏� �긽�솴�뿉�꽌留� �옉�룞�븯寃� �걫  ( �씠寃껊뱾�� �궗�떎 �븘�몢�씠�끂�뿉�꽌 媛숈씠 蹂대궡�빞�븷 �뜲�씠�꽣�땲源� �굹以묒뿉 �븘�몢�씠�끂濡� �삷湲곗옄)
+		/* 가중치를 조건을 주고 한 가지 상황에서만 작동하게 끔  ( 이것들은 사실 아두이노에서 같이 보내야할 데이터니까 나중에 아두이노로 옮기자)
 		 * 
-		 * 1. �젣�씪 媛��슫�뜲�뿉 �엳�뒗 �꽱�꽌�뱾
-		 * >> �삩�룄媛� �젣�씪 以묒슂�븯湲� �븣臾몄뿉 �삩�룄�뿉 媛�以묒튂瑜� �넂寃� �꽕�젙
+		 * 1. 제일 가운데에 있는 센서들
+		 * >> 온도가 제일 중요하기 때문에 온도에 가중치를 높게 설정
 		 *  double co2_weight = 0.10;
 			double temp_weight = 0.80;
 			double hmd_weight = 0.10;
-		 * 2. 諛붽묑�뿉 �엳�뒗 �꽱�꽌�뱾
-		 * >> �삩�룄蹂대떎�뒗 �씠�궛�솕�깂�냼, �뒿�룄 �꽱�꽌媛� 以묒슂�빐�꽌 媛�以묒튂瑜� �넂寃� �꽕�젙
+		 * 2. 바깥에 있는 센서들
+		 * >> 온도보다는 이산화탄소, 습도 센서가 중요해서 가중치를 높게 설정
 		 *  double co2_weight = 0.60;
 			double temp_weight = 0.10;
 			double hmd_weight = 0.30;
@@ -70,7 +70,7 @@ public class SensorController {
 		
 
 		
-		//�꽱�꽌�뿉 �뜲�씠�꽣瑜� �꽔�쓣 DTO �깮�꽦
+		//센서에 데이터를 넣을 DTO 생성
 		SensorDTO sDTO = new SensorDTO();
 		
 		sDTO.setCo2_nowval(Double.parseDouble(jsonObj.get("CoData").toString()));
@@ -98,7 +98,7 @@ public class SensorController {
 		log.info("hmd_pastval : " + sDTO.getHmd_pastval());
 		
 		
-		//�꽌鍮꾩뒪濡� �꽆湲곌린
+		//서비스로 넘기기
 		int result = sensorService.putSensorData(sDTO);
 		
 	}
