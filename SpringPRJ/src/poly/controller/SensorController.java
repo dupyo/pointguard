@@ -1,6 +1,8 @@
 package poly.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -10,6 +12,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.select.Elements;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +24,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import poly.dto.SensorDTO;
+import poly.dto.SensorInfoDTO;
 import poly.service.ISensorService;
+import poly.util.CmmUtil;
 
 @Controller
 public class SensorController {
@@ -118,23 +125,45 @@ public class SensorController {
 	}
 	//유연준 (디테일페이지)
 	@RequestMapping(value="sensor/detailpage")
-	public String detailpage(HttpServletRequest request, ModelMap model) {
+	public String detailpage(HttpServletRequest request,HttpServletResponse response, ModelMap model) throws Exception {
 		log.info(this.getClass());
 		
 		String M_Name = request.getParameter("value");
 		
-		MLocDTO pDTO = null;
-		pDTO = new MLocDTO();
+		SensorInfoDTO pDTO = new SensorInfoDTO();
 		
-		pDTO.setM_name(M_Name);
+		log.info(this.getClass().getName() + " value : " + M_Name);
+		pDTO.setMt_name(M_Name);
+		log.info(this.getClass().getName() + " setMt_name : " + pDTO.getMt_name());
+		log.info(this.getClass().getName() + "start service logic");
+		List<SensorInfoDTO> pList = sensorService.getMLocList(pDTO);
 		
-		model.addAttribute("M_Name", M_Name);
+		SensorInfoDTO rDTO = new SensorInfoDTO();
+		rDTO.setMt_name(M_Name);
+		List<SensorInfoDTO> rList = sensorService.getSSinfoList(rDTO);
+		
+		log.info(this.getClass().getName() + " rList.get(0).getMt_name() : " + rList.get(0).getMt_loc_x());
+		
+		log.info(this.getClass().getName() + "start service end");
 		log.info(M_Name);
+		log.info(pList.get(0).getMt_loc_x());
+		log.info(pList.get(0).getMt_loc_y());
+		log.info(pList.get(0).getMt_seq());
+		log.info(rList.get(0).getSs_loc_x());
+		log.info(rList.get(0).getSs_loc_y());
+		log.info(rList.get(0).getSs_id());
+		model.addAttribute("M_Name", M_Name);
+		model.addAttribute("SS_Loc_x", rList.get(0).getSs_loc_x());
+		model.addAttribute("SS_ID", rList.get(0).getSs_id());
+		model.addAttribute("SS_Loc_y",rList.get(0).getSs_loc_y());
+		model.addAttribute("M_Loc_x",pList.get(0).getMt_loc_x());
+		model.addAttribute("M_Loc_y",pList.get(0).getMt_loc_y());
+		model.addAttribute("M_Seq",pList.get(0).getMt_seq());
 		
 		
 		
 		return "/sensor/detailpage";
-	} 
+	}
 	//유연준 메인페이지
 	@RequestMapping(value="sensor/mainpage")
 	public String mainpage(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
@@ -145,10 +174,10 @@ public class SensorController {
 							"https://weather.naver.com/today/06110101","https://weather.naver.com/today/05110101","https://weather.naver.com/today/12110152","https://weather.naver.com/today/10110101","https://weather.naver.com/today/08110580"
 							,"https://weather.naver.com/today/14130116"};
 		String [] a = {"서울","춘천","청주","수원","대전","대구","광주","목포","울산","부산","제주"};
-		List temp = new ArrayList();
-		List humidity = new ArrayList();
-		List wind = new ArrayList();
-		List Loc = new ArrayList();
+		List<Elements> temp = new ArrayList<Elements>();
+		List<Elements> humidity = new ArrayList<Elements>();
+		List<Elements> wind = new ArrayList<Elements>();
+		List<String> Loc = new ArrayList<String>();
 		for(int j=0; j<a.length; j++) {
 			Loc.add(a[j]);
 		}
@@ -165,25 +194,29 @@ public class SensorController {
 			 humidity.add(Humidity);
 			 wind.add(Wind);
 		}
+		
 		model.addAttribute("temp", temp);
 		model.addAttribute("humidity", humidity);
 		model.addAttribute("wind", wind);
 		model.addAttribute("loc", Loc);
-		//기상 데이터 크롤링 
-		/*
-		 * String WeatherURL = "https://weather.naver.com/today"; Document doc =
-		 * Jsoup.connect(WeatherURL).get(); //HTML로 부터 데이터 가져오기 Elements temp =
-		 * doc.select(".weather_area .summary_list  .desc_feeling");//원하는 태그 선택 String[]
-		 * str1 = temp.text().split(" ");//정보 파싱 Elements humidity =
-		 * doc.select(".weather_area .summary_list  .desc_humidity");//원하는 태그 선택
-		 * String[] str2 = humidity.text().split(" ");//정보 파싱 Elements wind=
-		 * doc.select(".weather_area .summary_list  .desc_wind");//원하는 태그 선택 String[]
-		 * str3 = wind.text().split(" ");//정보 파싱 String loc = "서울";
-		 */
-		//기상특보 크롤링 
+		
 		
 		
 		return "/sensor/mainpage";
 	}
+	//유연준 ajax
+	@RequestMapping(value="/sensor/sensorDataList.do")
+	public @ResponseBody List<SensorInfoDTO> mlocsearchList(HttpServletRequest request)throws Exception{
+		
+		String ss_id = CmmUtil.nvl(request.getParameter("SS_ID"));
+		
+		log.info(ss_id);
+		SensorInfoDTO pDTO = new SensorInfoDTO();
+		pDTO.setSs_id(ss_id);
+		
+		List<SensorInfoDTO> rList = sensorService.getssvalList(pDTO);
+		return rList;
+	}
+	
 
 }
