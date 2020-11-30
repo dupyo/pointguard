@@ -11,8 +11,11 @@ public interface ISensorService {
 	
 	List<SensorInfoDTO> getMLocList(SensorInfoDTO pDTO)throws Exception;
 
+
 	List<SensorInfoDTO> getSSinfoList(SensorInfoDTO rDTO) throws Exception;
 
+
 	List<SensorInfoDTO> getssvalList(SensorInfoDTO pDTO)throws Exception;
+	
 
 }

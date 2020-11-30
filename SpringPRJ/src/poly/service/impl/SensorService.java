@@ -2,11 +2,14 @@ package poly.service.impl;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import poly.dto.SensorDTO;
 import poly.dto.SensorInfoDTO;
+import poly.persistance.mapper.ISensorMapper;
 import poly.service.ISensorService;
 
 @Service("SensorService")
@@ -14,10 +17,9 @@ public class SensorService implements ISensorService {
 
 	
 	private Logger log = Logger.getLogger(this.getClass());
-	
-	/*
-	 * @Resource(name = "MLocMapper") private IMLocMapper mlocMapper;
-	 */
+	@Resource(name = "SensorMapper")
+	private ISensorMapper sensorMapper;
+
 
 	@Override
 	public int putSensorData(SensorDTO sDTO) throws Exception {
@@ -119,21 +121,18 @@ public class SensorService implements ISensorService {
 	 */
 
 	@Override
-	public List<SensorInfoDTO> getMLocList(SensorInfoDTO pDTO) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<SensorInfoDTO> getMLocList(SensorInfoDTO pDTO) throws Exception{
+		log.info(this.getClass().getName() + ".getMLocList start !!");
+		log.info(this.getClass().getName() + " setMt_name : " + pDTO.getMt_name());
+		return sensorMapper.getMLocList(pDTO);
 	}
-
 	@Override
-	public List<SensorInfoDTO> getSSinfoList(SensorInfoDTO rDTO) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<SensorInfoDTO> getssvalList(SensorInfoDTO pDTO) throws Exception{
+		return sensorMapper.getssvalList(pDTO);
 	}
-
 	@Override
-	public List<SensorInfoDTO> getssvalList(SensorInfoDTO pDTO) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public List<SensorInfoDTO> getSSinfoList(SensorInfoDTO rDTO) throws Exception{
+		return sensorMapper.getSSinfoList(rDTO);
 	}
 
 }

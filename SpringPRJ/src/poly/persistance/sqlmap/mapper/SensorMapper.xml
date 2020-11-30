@@ -1,9 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <!-- JAVA와 연결할 Mapper 파일 설정 -->
-<mapper namespace="poly.persistance.mapper.SensorMapper">
-	<insert id="putSensorData" parameterType="SensorDTO">
-		
+<mapper namespace="poly.persistance.mapper.ISensorMapper">
+
+	<!-- 산위치 -->
+	<select id="getMLocList" resultType="SensorInfoDTO" parameterType="SensorInfoDTO">
+	SELECT MT_SEQ, MT_LOC_X, MT_LOC_Y
+	FROM pointguard.mountain
+	where MT_NAME =#{mt_name}
+	</select>
+	<!-- 센서 위치  -->
+	<select id="getSSinfoList" resultType="SensorInfoDTO" parameterType="SensorInfoDTO">
+	SELECT SS_LOC_X,
+		   SS_LOC_Y,
+		   SS_ID
+	FROM pointguard.sensor_info 
+	JOIN pointguard.mountain 
+    ON pointguard.sensor_info.MT_SEQ = pointguard.mountain.MT_SEQ
+	where MT_NAME = #{mt_name}
+	</select>
 	
-	</insert>
+	<!-- 센서값 -->
+	<select id="getssvalList" resultType="SensorInfoDTO" parameterType="SensorInfoDTO">
+	SELECT SS_VAL_CO2_VAL,
+		   SS_VAL_TEMP_VAL,
+		   SS_VAL_HMD_VAL,
+		   SS_VAL_G_VAL,
+	FROM pointguard.mountain
+	where MT_NAME =#{mt_name}
+	</select>
+	
+	
+	
 </mapper>

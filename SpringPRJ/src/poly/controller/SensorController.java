@@ -124,47 +124,6 @@ public class SensorController {
 		return "/mm";
 	}
 	//유연준 (디테일페이지)
-	@RequestMapping(value="sensor/detailpage")
-	public String detailpage(HttpServletRequest request,HttpServletResponse response, ModelMap model) throws Exception {
-		log.info(this.getClass());
-		
-		String M_Name = request.getParameter("value");
-		
-		SensorInfoDTO pDTO = new SensorInfoDTO();
-		
-		log.info(this.getClass().getName() + " value : " + M_Name);
-		pDTO.setMt_name(M_Name);
-		log.info(this.getClass().getName() + " setMt_name : " + pDTO.getMt_name());
-		log.info(this.getClass().getName() + "start service logic");
-		List<SensorInfoDTO> pList = sensorService.getMLocList(pDTO);
-		
-		SensorInfoDTO rDTO = new SensorInfoDTO();
-		rDTO.setMt_name(M_Name);
-		List<SensorInfoDTO> rList = sensorService.getSSinfoList(rDTO);
-		
-		log.info(this.getClass().getName() + " rList.get(0).getMt_name() : " + rList.get(0).getMt_loc_x());
-		
-		log.info(this.getClass().getName() + "start service end");
-		log.info(M_Name);
-		log.info(pList.get(0).getMt_loc_x());
-		log.info(pList.get(0).getMt_loc_y());
-		log.info(pList.get(0).getMt_seq());
-		log.info(rList.get(0).getSs_loc_x());
-		log.info(rList.get(0).getSs_loc_y());
-		log.info(rList.get(0).getSs_id());
-		model.addAttribute("M_Name", M_Name);
-		model.addAttribute("SS_Loc_x", rList.get(0).getSs_loc_x());
-		model.addAttribute("SS_ID", rList.get(0).getSs_id());
-		model.addAttribute("SS_Loc_y",rList.get(0).getSs_loc_y());
-		model.addAttribute("M_Loc_x",pList.get(0).getMt_loc_x());
-		model.addAttribute("M_Loc_y",pList.get(0).getMt_loc_y());
-		model.addAttribute("M_Seq",pList.get(0).getMt_seq());
-		
-		
-		
-		return "/sensor/detailpage";
-	}
-	//유연준 메인페이지
 	@RequestMapping(value="sensor/mainpage")
 	public String mainpage(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 		log.info(this.getClass());
@@ -194,7 +153,6 @@ public class SensorController {
 			 humidity.add(Humidity);
 			 wind.add(Wind);
 		}
-		
 		model.addAttribute("temp", temp);
 		model.addAttribute("humidity", humidity);
 		model.addAttribute("wind", wind);
@@ -204,7 +162,48 @@ public class SensorController {
 		
 		return "/sensor/mainpage";
 	}
-	//유연준 ajax
+	
+	@RequestMapping(value="sensor/detailpage")
+	public String detailpage(HttpServletRequest request,HttpServletResponse response, ModelMap model) throws Exception {
+		log.info(this.getClass());
+		
+		String M_Name = request.getParameter("value");
+		
+		SensorInfoDTO pDTO = new SensorInfoDTO();
+		//산 위치 데이터 가져오가
+		log.info(this.getClass().getName() + " value : " + M_Name);
+		log.info(this.getClass().getName() + " setMt_name : " + pDTO.getMt_name());
+		log.info(this.getClass().getName() + "start service logic");
+		pDTO.setMt_name(M_Name);
+		List<SensorInfoDTO> pList = sensorService.getMLocList(pDTO);
+		
+		//센서 위치 가져오기
+		SensorInfoDTO rDTO = new SensorInfoDTO();
+		rDTO.setMt_name(M_Name);
+		List<SensorInfoDTO> rList = sensorService.getSSinfoList(rDTO);
+		
+		log.info(this.getClass().getName() + " rList.get(0).getMt_name() : " + rList.get(0).getMt_loc_x());
+		
+		log.info(this.getClass().getName() + "start service end");
+		log.info(M_Name);
+		log.info(pList.get(0).getMt_loc_x());
+		log.info(pList.get(0).getMt_loc_y());
+		log.info(pList.get(0).getMt_seq());
+		log.info(rList.get(0).getSs_loc_x());
+		log.info(rList.get(0).getSs_loc_y());
+		log.info(rList.get(0).getSs_id());
+		model.addAttribute("M_Name", M_Name);
+		model.addAttribute("SS_Loc_x", rList.get(0).getSs_loc_x());
+		model.addAttribute("SS_ID", rList.get(0).getSs_id());
+		model.addAttribute("SS_Loc_y",rList.get(0).getSs_loc_y());
+		model.addAttribute("M_Loc_x",pList.get(0).getMt_loc_x());
+		model.addAttribute("M_Loc_y",pList.get(0).getMt_loc_y());
+		model.addAttribute("M_Seq",pList.get(0).getMt_seq());
+		
+		
+		
+		return "/sensor/detailpage";
+	}
 	@RequestMapping(value="/sensor/sensorDataList.do")
 	public @ResponseBody List<SensorInfoDTO> mlocsearchList(HttpServletRequest request)throws Exception{
 		
@@ -217,6 +216,7 @@ public class SensorController {
 		List<SensorInfoDTO> rList = sensorService.getssvalList(pDTO);
 		return rList;
 	}
+	
 	
 
 }

@@ -4,11 +4,13 @@
 <%@ page import="org.jsoup.nodes.Document"%>
 <%@ page import="org.jsoup.nodes.Element"%>
 <%@ page import="org.jsoup.select.Elements"%>
+<%@ page import="java.util.List"%>
+<%@ page import="java.util.ArrayList"%>
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport"
@@ -30,7 +32,42 @@
 <script language="javascript" type="text/javascript" src="/LicenseKey/rMateMapChartH5License.js"></script>
 <!-- 실제적인 rMateMapChartH5 라이브러리 -->
 <script language="javascript" type="text/javascript" src="/rMateMapChartH5/JS/rMateMapChartH5.js"></script>
+<script>
 
+/* 	function search(){
+		
+		var M_Name = $('#M_Name').val();
+		
+		if(%('#M_Name').val()== ""){
+			console.log('#M_Name').focus();
+			return false;
+		}
+		console.log("M_Name :" +M_Name);
+		$.ajax({
+			url :'/sensor/mlocsearchList.do?vlaue='+$('#M_Name').val(),
+			type :'post',
+			data : {M_Name : M_Name},
+			success : function(data){
+				console.log(data.SENSOR)
+				var resHTML = '';
+				
+				
+				if(data.length ==0){
+					resHTML += '<div class="trow" style="displayL table-row;">';
+					resHTML += '<div class="ajax_div_content_box">검색결과가 없습니다.</div>';
+					resHTML += '</div>';
+				}
+				for (var i=0; i<data.length; i++){
+					resHTML += '<div class="trow" style="displayL table-row;">';
+					resHTML + '<div class="div_content_box">'+data[i].mt_name+'</div>'
+							+'=====================';
+				}
+				$("#resContainer").html(resHTML);
+				
+			}
+		})
+	} */
+</script>
 </head>
 
 <body id="page-top">
@@ -44,11 +81,11 @@
 			id="accordionSidebar">
 
 			<!-- 상단 제목 -->
-			<a
-				class="sidebar-brand d-flex align-items-center justify-content-center"
-				href="/sensor/index.do">
-				<div class="sidebar-brand-text mx-3">산불 예방 시스템</div>
-			</a>
+				<div class="sidebar-brand-text mx-3">
+					<a class="sidebar-brand d-flex align-items-center justify-content-center" href="/sensor/mainpage.do">
+						산불 예방 시스템
+					</a>
+				</div>
 
 			<!-- 산 메뉴 -->
 			<hr class="sidebar-divider my-0">
@@ -58,7 +95,7 @@
 			<ul id="main-menu">
 				<li><a href="#"><h5>ㄱ-ㄹ</h5></a>
 					<ul id="sub-menu">
-						<li><a href="#">관악산 </a></li>
+						<li><a href="detailpage.do?value=">관악산 </a></li>
 						<li><a href="#">개양산 </a></li>
 						<li><a href="#">괴산 </a></li>
 						<li><a href="#">갈기산 </a></li>
@@ -76,7 +113,7 @@
 			<ul id="main-menu">
 				<li><a href="#"><h5>ㅇ-ㅊ</h5></a>
 					<ul id="sub-menu">
-						<li><a href="#">가야산 </a></li>
+						<li><a href="detailpage.do?value=우장산">우장산 </a></li>
 						<li><a href="#">금강산 </a></li>
 						<li><a href="#">고블린 </a></li>
 					</ul></li>
@@ -84,9 +121,11 @@
 			<ul id="main-menu">
 				<li><a href="#"><h5>ㅋ-ㅎ</h5></a>
 					<ul id="sub-menu">
-						<li><a href="#">가야산 </a></li>
-						<li><a href="#">금강산 </a></li>
-						<li><a href="#">고블린 </a></li>
+						<li><a href="#">한라산 </a></li>
+						<li><a href="#">함지산 </a></li>
+						<li><a href="#">호방산 </a></li>
+						<li><a href="#">화방산 </a></li>
+						<li><a href="#">학산 </a></li>
 					</ul></li>
 			</ul>
 		</ul>
@@ -106,15 +145,11 @@
 					</button>
 
 					<!-- 검색창 -->
-					<form
-						class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search"
-						action="/sensor">
+					<form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" action="/sensor/detailpage.do?value=우장산">
 						<div class="input-group">
-							<input type="text" class="form-control bg-light border-0 small"
-								placeholder="Search for..." aria-label="Search"
-								aria-describedby="basic-addon2">
+							<input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." name="M_Name" aria-label="Search"aria-describedby="basic-addon2">
 							<div class="input-group-append">
-								<button class="btn btn-primary" type="button">
+								<button class="btn btn-primary" type="button" onClick="JavaScript:search();">
 									<i class="fas fa-search fa-sm"></i>
 								</button>
 							</div>
@@ -127,37 +162,35 @@
 				<div class="container-fluid">
 
 					<!-- Page Heading -->
-					<div
-						class="d-sm-flex align-items-center justify-content-between mb-4">
-						<h1 class="h3 mb-0 text-gray-800">오늘의 환경</h1>
+					<div class="d-sm-flex align-items-center justify-content-between mb-4">
+						<div><h1 class="h3 mb-0 text-gray-800">오늘의 환경</h1></div>
 					</div>
-
 					<!-- Content Row -->
-					<div class="row">
+					 <div class="row">
+
+						<!-- Earnings (Monthly) Card Example -->
 
 						<!-- Earnings (Monthly) Card Example -->
 						<div class="col-xl-3 col-md-6 mb-4">
-							<div class="card border-left-primary shadow h-100 py-2">
+							<div class="card border-left-success shadow h-100 py-2">
 								<div class="card-body">
 									<div class="row no-gutters align-items-center">
 										<div class="col mr-2">
 											<div
-												class="text-xs font-weight-bold text-primary text-uppercase mb-1"
+												class="text-xs font-weight-bold text-success text-uppercase mb-1"
 												style="text-align: center">지역</div>
 											<div class="h5 mb-0 font-weight-bold text-gray-800"
 												style="text-align: center; margin: 5px;">
-												<h1>${loc.get(0)}</h1>
+												<h1><%=request.getAttribute("loc") %></h1>
 											</div>
 										</div>
 										<div class="col-auto">
-											<i class="fas fa-calendar fa-2x text-gray-300"></i>
+											<i class="fas fa-temperature-low fa-3x text-gray-300"></i>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-
-						<!-- Earnings (Monthly) Card Example -->
 						<div class="col-xl-3 col-md-6 mb-4">
 							<div class="card border-left-success shadow h-100 py-2">
 								<div class="card-body">
@@ -199,9 +232,9 @@
 									</div>
 								</div>
 							</div>
-						</div>
+						</div> 
 
-						<!-- Pending Requests Card Example -->
+						 <!-- Pending Requests Card Example -->
 						<div class="col-xl-3 col-md-6 mb-4">
 							<div class="card border-left-warning shadow h-80 py-2">
 								<div class="card-body">
@@ -238,7 +271,7 @@
 									<h6 class="m-0 font-weight-bold text-primary" align="center">전국지도</h6>
 									<div class="dropdown no-arrow"></div>
 								</div>
-								<!-- Card Body -->
+								 <!-- Card Body -->
 								<div class="card-body">
 									<div class="dropdown no-arrow">
 										<div id="mapHolder" style="width: 100%; height: 450px;">
@@ -274,43 +307,39 @@
 											</div>
 										</div>
 									</div>
-								</div>
+								</div> 
 							</div>
 						</div>
 
 						<!-- 건조 주의보 -->
-						<div class="col-xl-3 col-lg-8 mb-8">
+						<div class="col-xl-3 col-lg-8">
 							<div class="card shadow mb-4">
-								<!-- Card Header - Dropdown -->
 								<div class="card-header ">
 									<h6 class="m-0 font-weight-bold text-primary" align="center">기상특보</h6>
 									<div class="dropdown no-arrow"></div>
 								</div>
-								<!-- Card Body -->
 								<div class="card-body">
-									<div class="chart-pie pt-4 pb-2">
-									<div class="mt-4 text-center small"style="width: 100%; height: 300px;"></div>
+									<div class="mt-4 text-center small"style="width: 100%; height: 425px;">
+											<p><img src="<%=request.getAttribute("weather_img")%>" alt="기상특보 현황"></p>
 									</div>
 								</div>
 							</div>
 						</div>
 						<!-- 건조주의보 -->
-						<div class="col-xl-3 col-lg-8">
+						<div class="col-xl-3 col-lg-8 ">
 							<div class="card shadow mb-4">
-								<!-- Card Header - Dropdown -->
 								<div class="card-header ">
 									<h6 class="m-0 font-weight-bold text-primary" align="center">산불위험도</h6>
 									<div class="dropdown no-arrow"></div>
 								</div>
-								<!-- Card Body -->
 								<div class="card-body">
-									<div class="chart-pie pt-4 pb-2"></div>
-									<div class="mt-4 text-center small"
-										style="width: 100%; height: 300px;"></div>
+									<div class="mt-4 text-center small"style="width: 100%; height: 425px;">
+									</div>
 								</div>
 							</div>
 						</div>
 					</div>
+					
 </body>
 
 </html>
