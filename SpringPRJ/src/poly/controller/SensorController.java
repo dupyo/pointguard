@@ -137,6 +137,9 @@ public class SensorController {
 		List<Elements> humidity = new ArrayList<Elements>();
 		List<Elements> wind = new ArrayList<Elements>();
 		List<String> Loc = new ArrayList<String>();
+		String warn_url = "https://www.weather.go.kr/weather/warning/status.jsp";
+		Document weather_warn = Jsoup.connect(warn_url).get();
+		Elements weather_img = weather_warn.select(".content_weather .special_report_list2 dd p:nth-child(1) img");
 		for(int j=0; j<a.length; j++) {
 			Loc.add(a[j]);
 		}
@@ -153,6 +156,8 @@ public class SensorController {
 			 humidity.add(Humidity);
 			 wind.add(Wind);
 		}
+		log.info(weather_img);
+		model.addAttribute("weather_img", weather_img);
 		model.addAttribute("temp", temp);
 		model.addAttribute("humidity", humidity);
 		model.addAttribute("wind", wind);
@@ -180,22 +185,23 @@ public class SensorController {
 		//센서 위치 가져오기
 		SensorInfoDTO rDTO = new SensorInfoDTO();
 		rDTO.setMt_name(M_Name);
-		List<SensorInfoDTO> rList = sensorService.getSSinfoList(rDTO);
+		List<SensorInfoDTO> sList = sensorService.getSSinfoList(rDTO);
 		
-		log.info(this.getClass().getName() + " rList.get(0).getMt_name() : " + rList.get(0).getMt_loc_x());
+		log.info(this.getClass().getName() + " rList.get(0).getMt_name() : " + sList.get(0).getMt_loc_x());
 		
 		log.info(this.getClass().getName() + "start service end");
 		log.info(M_Name);
 		log.info(pList.get(0).getMt_loc_x());
 		log.info(pList.get(0).getMt_loc_y());
 		log.info(pList.get(0).getMt_seq());
-		log.info(rList.get(0).getSs_loc_x());
-		log.info(rList.get(0).getSs_loc_y());
-		log.info(rList.get(0).getSs_id());
+		log.info(sList.get(0).getSs_loc_x());
+		log.info(sList.get(0).getSs_loc_y());
+		log.info(sList.get(0).getSs_id());
+		model.addAttribute("sList", sList);
 		model.addAttribute("M_Name", M_Name);
-		model.addAttribute("SS_Loc_x", rList.get(0).getSs_loc_x());
-		model.addAttribute("SS_ID", rList.get(0).getSs_id());
-		model.addAttribute("SS_Loc_y",rList.get(0).getSs_loc_y());
+		model.addAttribute("SS_Loc_x", sList.get(0).getSs_loc_x());
+		model.addAttribute("SS_ID", sList.get(0).getSs_id());
+		model.addAttribute("SS_Loc_y",sList.get(0).getSs_loc_y());
 		model.addAttribute("M_Loc_x",pList.get(0).getMt_loc_x());
 		model.addAttribute("M_Loc_y",pList.get(0).getMt_loc_y());
 		model.addAttribute("M_Seq",pList.get(0).getMt_seq());
@@ -204,18 +210,48 @@ public class SensorController {
 		
 		return "/sensor/detailpage";
 	}
-	@RequestMapping(value="/sensor/sensorDataList.do")
+	@RequestMapping(value="/sensor/sensorDataList")
 	public @ResponseBody List<SensorInfoDTO> mlocsearchList(HttpServletRequest request)throws Exception{
 		
-		String ss_id = CmmUtil.nvl(request.getParameter("SS_ID"));
-		
-		log.info(ss_id);
+		log.info(this.getClass()+ " start");
+		String name = CmmUtil.nvl(request.getParameter("name"));
+		log.info("name : " + name);
 		SensorInfoDTO pDTO = new SensorInfoDTO();
-		pDTO.setSs_id(ss_id);
+		pDTO.setSs_id(name);
+		List<SensorInfoDTO> rList = sensorService.getSsValList(pDTO);
+
+
+		for(int i=0; i<rList.size(); i++) {
+			log.info(rList.get(i).getSs_val_co2_val());
+			log.info(rList.get(i).getSs_val_co2_val());
+			log.info(rList.get(i).getSs_val_co2_val());
+			log.info(rList.get(i).getSs_val_co2_val());
+		}
 		
-		List<SensorInfoDTO> rList = sensorService.getssvalList(pDTO);
+		log.info(this.getClass()+ "end");
 		return rList;
+		
 	}
+	
+	@RequestMapping(value="sensor/receiveSensorData")
+	   @ResponseBody
+	   public double reveiveSensorData(HttpServletRequest request) throws Exception { 
+	      log.info(this.getClass().getName() + ".sensor/receiveSensorData start !!");
+	      log.info("ss_name : "+ request.getParameter("ss_id"));
+	      log.info("seq : " + request.getParameter("ss_val_seq"));
+	      
+	      String ss_id = request.getParameter("ss_id");
+	      String ss_val_seq = request.getParameter("ss_val_seq");
+	      
+	      SensorDTO sDTO = new SensorDTO();
+	      sDTO.setSs_id(ss_id);
+	      sDTO.setSs_val_seq(ss_val_seq);
+	      
+	      SensorDTO pDTO = sensorService.receiveSensorData(sDTO);
+	      log.info("g_val : " + pDTO.getSs_val_g_val());
+	            
+	      return pDTO.getSs_val_g_val();
+	   }
 	
 	
 

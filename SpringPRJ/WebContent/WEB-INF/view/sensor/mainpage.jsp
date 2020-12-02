@@ -6,6 +6,12 @@
 <%@ page import="org.jsoup.select.Elements"%>
 <%@ page import="java.util.List"%>
 <%@ page import="java.util.ArrayList"%>
+<% 
+	List<String> temp = (List<String>)request.getAttribute("temp");
+	List<String> humidity = (List<String>)request.getAttribute("humidity");
+	List<String> wind = (List<String>)request.getAttribute("wind");
+	List<String> loc = (List<String>)request.getAttribute("loc");
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -143,18 +149,6 @@
 						class="btn btn-link d-md-none rounded-circle mr-3">
 						<i class="fa fa-bars"></i>
 					</button>
-
-					<!-- 검색창 -->
-					<form class="d-none d-sm-inline-block form-inline mr-auto ml-md-3 my-2 my-md-0 mw-100 navbar-search" action="/sensor/detailpage.do?value=우장산">
-						<div class="input-group">
-							<input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." name="M_Name" aria-label="Search"aria-describedby="basic-addon2">
-							<div class="input-group-append">
-								<button class="btn btn-primary" type="button" onClick="JavaScript:search();">
-									<i class="fas fa-search fa-sm"></i>
-								</button>
-							</div>
-						</div>
-					</form>
 				</nav>
 				<!-- End of Topbar -->
 
@@ -181,7 +175,7 @@
 												style="text-align: center">지역</div>
 											<div class="h5 mb-0 font-weight-bold text-gray-800"
 												style="text-align: center; margin: 5px;">
-												<h1><%=request.getAttribute("loc") %></h1>
+												<h1>${loc.get(0)}</h1>
 											</div>
 										</div>
 										<div class="col-auto">

@@ -127,12 +127,22 @@ public class SensorService implements ISensorService {
 		return sensorMapper.getMLocList(pDTO);
 	}
 	@Override
-	public List<SensorInfoDTO> getssvalList(SensorInfoDTO pDTO) throws Exception{
-		return sensorMapper.getssvalList(pDTO);
+	public List<SensorInfoDTO> getSsValList(SensorInfoDTO pDTO) throws Exception{
+		return sensorMapper.getSsValList(pDTO);
 	}
 	@Override
 	public List<SensorInfoDTO> getSSinfoList(SensorInfoDTO rDTO) throws Exception{
 		return sensorMapper.getSSinfoList(rDTO);
 	}
+	@Override
+	public SensorDTO receiveSensorData(SensorDTO sDTO) throws Exception {
+	      
+	      log.info(this.getClass().getName() + ".receiveSensorData service start !!");
+	      log.info("ss_id : " + sDTO.getSs_id());
+	      
+	      log.info(this.getClass().getName() + ".receiveSensorData service end !!");
+
+	      return sensorMapper.receiveSensorData(sDTO);
+	   }
 
 }
