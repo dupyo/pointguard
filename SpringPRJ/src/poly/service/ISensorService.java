@@ -15,7 +15,9 @@ public interface ISensorService {
 	List<SensorInfoDTO> getSSinfoList(SensorInfoDTO rDTO) throws Exception;
 
 
-	List<SensorInfoDTO> getssvalList(SensorInfoDTO pDTO)throws Exception;
+	List<SensorInfoDTO> getSsValList(SensorInfoDTO pDTO)throws Exception;
+
+	SensorDTO receiveSensorData(SensorDTO sDTO) throws Exception;
 	
 
 }

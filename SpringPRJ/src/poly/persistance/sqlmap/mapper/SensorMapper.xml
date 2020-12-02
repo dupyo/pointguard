@@ -21,14 +21,22 @@
 	</select>
 	
 	<!-- 센서값 -->
-	<select id="getssvalList" resultType="SensorInfoDTO" parameterType="SensorInfoDTO">
+	<select id="getSsValList" resultType="SensorInfoDTO" parameterType="SensorInfoDTO">
 	SELECT SS_VAL_CO2_VAL,
 		   SS_VAL_TEMP_VAL,
 		   SS_VAL_HMD_VAL,
-		   SS_VAL_G_VAL,
-	FROM pointguard.mountain
-	where MT_NAME =#{mt_name}
+		   SS_VAL_G_VAL
+	FROM pointguard.sensor_val
+	where SS_ID=#{ss_id}
 	</select>
+   <select id="receiveSensorData" resultType="SensorDTO" parameterType="SensorDTO">
+      SELECT SS_VAL_G_VAL
+      FROM pointguard.sensor_val
+      WHERE 
+         SS_ID = #{ss_id}
+      AND
+         SS_VAL_SEQ = #{ss_val_seq}
+   </select>
 	
 	
 	
