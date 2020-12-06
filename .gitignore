@@ -8,3 +8,8 @@ SpringPRJ/.project
 LICENSE
 README.md
 bash.exe.stackdump
+
+*.class
+pom.properties
+MANIFEST.MF
+*.tmp
