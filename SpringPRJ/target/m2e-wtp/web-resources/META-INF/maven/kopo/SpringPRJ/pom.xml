@@ -188,6 +188,12 @@
 			<artifactId>jsoup</artifactId>
 			<version>1.12.1</version>
 		</dependency>
+		<!-- 제이슨 -->
+		 <dependency>
+          <groupId>org.json</groupId>
+          <artifactId>json</artifactId>
+          <version>20180813</version>
+        </dependency>
 		
 	</dependencies>
 

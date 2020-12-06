@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import poly.dto.SensorDTO;
 import poly.dto.SensorInfoDTO;
@@ -40,73 +39,60 @@ public class SensorController {
 	public void getSensorData(@RequestBody String info) throws Exception{ 
 		
 		log.info(this.getClass().getName() + ".getSonsorData start !");
-		
-		JSONParser parser = new JSONParser();
-		Object obj = parser.parse(info);
-		JSONObject jsonObj = (JSONObject) obj;
-		
-		log.info("info : " + info);
-		
-		log.info("codata : " + jsonObj.get("CoData"));
-		
-		//임시 습도 값
-		double HmdData = 10;
-		double HmdpData = 100;
-		
-		//임시 동일 가증치
-		double co2_weight = 0.34;
-		double temp_weight = 0.33;
-		double hmd_weight = 0.33;
-		
-		/* 가중치를 조건을 주고 한 가지 상황에서만 작동하게 끔  ( 이것들은 사실 아두이노에서 같이 보내야할 데이터니까 나중에 아두이노로 옮기자)
-		 * 
-		 * 1. 제일 가운데에 있는 센서들
-		 * >> 온도가 제일 중요하기 때문에 온도에 가중치를 높게 설정
-		 *  double co2_weight = 0.10;
-			double temp_weight = 0.80;
-			double hmd_weight = 0.10;
-		 * 2. 바깥에 있는 센서들
-		 * >> 온도보다는 이산화탄소, 습도 센서가 중요해서 가중치를 높게 설정
-		 *  double co2_weight = 0.60;
-			double temp_weight = 0.10;
-			double hmd_weight = 0.30;
-		 * 
-		*/
-		
-		log.info(" jsonObj.get(\"CoData\").toString() : " + jsonObj.get("CoData").toString());
-		
-
-		
-		//센서에 데이터를 넣을 DTO 생성
-		SensorDTO sDTO = new SensorDTO();
-		
-		sDTO.setCo2_nowval(Double.parseDouble(jsonObj.get("CoData").toString()));
-		sDTO.setTemp_nowval(Double.parseDouble(jsonObj.get("TempData").toString()));
-		sDTO.setHmd_nowval(HmdData);
-		sDTO.setCo2_pastval(Double.parseDouble(jsonObj.get("CopData").toString()));
-		sDTO.setTemp_pastval(Double.parseDouble(jsonObj.get("TemppData").toString()));
-		sDTO.setHmd_pastval(HmdpData);
-		sDTO.setCo2_pptcn(Double.parseDouble(jsonObj.get("co2_pptcn").toString()));
-		sDTO.setTemp_pptcn(Double.parseDouble(jsonObj.get("temp_pptcn").toString()));
-		sDTO.setHmd_pptcn(Double.parseDouble(jsonObj.get("hmd_pptcn").toString()));
-		sDTO.setCo2_maxchg(Double.parseDouble(jsonObj.get("co2_maxchg").toString()));
-		sDTO.setTemp_maxchg(Double.parseDouble(jsonObj.get("temp_maxchg").toString()));
-		sDTO.setHmd_maxchg(Double.parseDouble(jsonObj.get("hmd_maxchg").toString()));
-		sDTO.setCo2_weight(co2_weight);
-		sDTO.setTemp_weight(temp_weight);
-		sDTO.setHmd_weight(hmd_weight);
-
-		
-		log.info("co2_nowval : " + sDTO.getCo2_nowval());
-		log.info("temp_nowval : " + sDTO.getTemp_nowval());
-		log.info("hmd_nowval : " + sDTO.getHmd_nowval());
-		log.info("co2_pastval : " + sDTO.getCo2_pastval());
-		log.info("temp_pastval : " + sDTO.getTemp_pastval());
-		log.info("hmd_pastval : " + sDTO.getHmd_pastval());
-		
-		
-		//서비스로 넘기기
-		int result = sensorService.putSensorData(sDTO);
+	      
+	      JSONParser parser = new JSONParser();
+	      Object obj = parser.parse(info);
+	      JSONObject jsonObj = (JSONObject) obj;
+	      
+	      log.info("info : " + info);
+	      
+	      log.info("codata : " + jsonObj.get("CoData"));
+	      
+	      log.info("id : " + jsonObj.get("ss_name"));
+	      
+	      //임시 동일 가증치
+	      double co2_weight = 0.34;
+	      double temp_weight = 0.33;
+	      double hmd_weight = 0.33;
+	      
+	      log.info(" jsonObj.get(\"CoData\").toString() : " + jsonObj.get("CoData").toString());
+	      
+	      //센서에 데이터를 넣을 DTO 생성
+	      SensorDTO sDTO = new SensorDTO();
+	      
+	      sDTO.setCo2_nowval(Double.parseDouble(jsonObj.get("CoData").toString()));
+	      sDTO.setTemp_nowval(Double.parseDouble(jsonObj.get("TempData").toString()));
+	      sDTO.setHmd_nowval(Double.parseDouble(jsonObj.get("HmdData").toString()));
+	      sDTO.setCo2_pastval(Double.parseDouble(jsonObj.get("CopData").toString()));
+	      sDTO.setTemp_pastval(Double.parseDouble(jsonObj.get("TemppData").toString()));
+	      sDTO.setHmd_pastval(Double.parseDouble(jsonObj.get("HmdpData").toString()));
+	      sDTO.setCo2_pptcn(Double.parseDouble(jsonObj.get("co2_pptcn").toString()));
+	      sDTO.setTemp_pptcn(Double.parseDouble(jsonObj.get("temp_pptcn").toString()));
+	      sDTO.setHmd_pptcn(Double.parseDouble(jsonObj.get("hmd_pptcn").toString()));
+	      sDTO.setCo2_maxchg(Double.parseDouble(jsonObj.get("co2_maxchg").toString()));
+	      sDTO.setTemp_maxchg(Double.parseDouble(jsonObj.get("temp_maxchg").toString()));
+	      sDTO.setHmd_maxchg(Double.parseDouble(jsonObj.get("hmd_maxchg").toString()));
+	      sDTO.setCo2_weight(co2_weight);
+	      sDTO.setTemp_weight(temp_weight);
+	      sDTO.setHmd_weight(hmd_weight);
+	      sDTO.setSs_id(jsonObj.get("ss_name").toString());
+	      
+	      log.info("co2_nowval : " + sDTO.getCo2_nowval());
+	      log.info("temp_nowval : " + sDTO.getTemp_nowval());
+	      log.info("hmd_nowval : " + sDTO.getHmd_nowval());
+	      log.info("co2_pastval : " + sDTO.getCo2_pastval());
+	      log.info("temp_pastval : " + sDTO.getTemp_pastval());
+	      log.info("hmd_pastval : " + sDTO.getHmd_pastval());
+	      
+	      
+	      //서비스로 넘기기
+	      int result = sensorService.putSensorData(sDTO);
+	      
+	      if(result==1) { 
+	         log.info("insert 성공 !!");
+	      } else { 
+	         log.info("insert 실패 !!");
+	      }
 		
 	}
 	
@@ -128,40 +114,32 @@ public class SensorController {
 	public String mainpage(HttpServletRequest request, HttpServletResponse response, ModelMap model) throws Exception {
 		log.info(this.getClass());
 		
-		
-		String [] Url = {"https://weather.naver.com/today","https://weather.naver.com/today/01110675","https://weather.naver.com/today/16111120","https://weather.naver.com/today/02113128","https://weather.naver.com/today/07110101",
+		// 기상정보 크롤링
+		String [] Url = {"https://weather.naver.com/today/09140104","https://weather.naver.com/today/01110675","https://weather.naver.com/today/16111120","https://weather.naver.com/today/02113128","https://weather.naver.com/today/07110101",
 							"https://weather.naver.com/today/06110101","https://weather.naver.com/today/05110101","https://weather.naver.com/today/12110152","https://weather.naver.com/today/10110101","https://weather.naver.com/today/08110580"
 							,"https://weather.naver.com/today/14130116"};
 		String [] a = {"서울","춘천","청주","수원","대전","대구","광주","목포","울산","부산","제주"};
 		List<Elements> temp = new ArrayList<Elements>();
 		List<Elements> humidity = new ArrayList<Elements>();
-		List<Elements> wind = new ArrayList<Elements>();
 		List<String> Loc = new ArrayList<String>();
-		String warn_url = "https://www.weather.go.kr/weather/warning/status.jsp";
-		Document weather_warn = Jsoup.connect(warn_url).get();
-		Elements weather_img = weather_warn.select(".content_weather .special_report_list2 dd p:nth-child(1) img");
 		for(int j=0; j<a.length; j++) {
 			Loc.add(a[j]);
 		}
 		for(int i=0; i<Url.length; i++) {
 			String WeatherURL = Url[i];
+			/*String WeatherURL = "https://weather.naver.com/today/02113128";*/
 			Document doc =Jsoup.connect(WeatherURL).get();
-			 Elements Temp =doc.select(".weather_area .summary_list  .desc_feeling");
-			 Elements Humidity = doc.select(".weather_area .summary_list  .desc_humidity");
-			 Elements Wind= doc.select(".weather_area .summary_list  .desc_wind");
-			 String[] str1 = Temp.text().split(" ");
-			 String[] str2 = Humidity.text().split(" ");
-			 String[] str3 = Wind.text().split(" ");
-			 temp.add(Temp);
+			 Elements Temp =doc.select("body .weather_area .current:nth-child(1)");
+			 Elements Humidity = doc.select("body .weather_area .summary_list .desc");
 			 humidity.add(Humidity);
-			 wind.add(Wind);
+			 temp.add(Temp);
 		}
-		log.info(weather_img);
-		model.addAttribute("weather_img", weather_img);
+		
+		
+		log.info(humidity.get(0).get(1));
+		log.info(temp);
 		model.addAttribute("temp", temp);
 		model.addAttribute("humidity", humidity);
-		model.addAttribute("wind", wind);
-		model.addAttribute("loc", Loc);
 		
 		
 		
@@ -191,12 +169,8 @@ public class SensorController {
 		
 		log.info(this.getClass().getName() + "start service end");
 		log.info(M_Name);
-		log.info(pList.get(0).getMt_loc_x());
-		log.info(pList.get(0).getMt_loc_y());
-		log.info(pList.get(0).getMt_seq());
-		log.info(sList.get(0).getSs_loc_x());
-		log.info(sList.get(0).getSs_loc_y());
-		log.info(sList.get(0).getSs_id());
+		log.info(sList.get(1).getSs_loc_x());
+		log.info(sList.get(1).getSs_loc_y());
 		model.addAttribute("sList", sList);
 		model.addAttribute("M_Name", M_Name);
 		model.addAttribute("SS_Loc_x", sList.get(0).getSs_loc_x());
@@ -211,7 +185,7 @@ public class SensorController {
 		return "/sensor/detailpage";
 	}
 	@RequestMapping(value="/sensor/sensorDataList")
-	public @ResponseBody List<SensorInfoDTO> mlocsearchList(HttpServletRequest request)throws Exception{
+	public String SensorDataList(HttpServletRequest request, ModelMap model)throws Exception{
 		
 		log.info(this.getClass()+ " start");
 		String name = CmmUtil.nvl(request.getParameter("name"));
@@ -223,19 +197,16 @@ public class SensorController {
 
 		for(int i=0; i<rList.size(); i++) {
 			log.info(rList.get(i).getSs_val_co2_val());
-			log.info(rList.get(i).getSs_val_co2_val());
-			log.info(rList.get(i).getSs_val_co2_val());
-			log.info(rList.get(i).getSs_val_co2_val());
 		}
-		
+		model.addAttribute("rList", rList);
 		log.info(this.getClass()+ "end");
-		return rList;
+		return "/sensor/resContainer";
 		
 	}
 	
 	@RequestMapping(value="sensor/receiveSensorData")
 	   @ResponseBody
-	   public double reveiveSensorData(HttpServletRequest request) throws Exception { 
+	   public Map<String, Object> reveiveSensorData(HttpServletRequest request) throws Exception { 
 	      log.info(this.getClass().getName() + ".sensor/receiveSensorData start !!");
 	      log.info("ss_name : "+ request.getParameter("ss_id"));
 	      log.info("seq : " + request.getParameter("ss_val_seq"));
@@ -248,11 +219,17 @@ public class SensorController {
 	      sDTO.setSs_val_seq(ss_val_seq);
 	      
 	      SensorDTO pDTO = sensorService.receiveSensorData(sDTO);
+	      log.info("여기까지는 온다잉?");
 	      log.info("g_val : " + pDTO.getSs_val_g_val());
 	            
-	      return pDTO.getSs_val_g_val();
+	      
+	      Map<String, Object> mDTO = new HashMap<>();
+	      mDTO.put("ss_loc_x", pDTO.getSs_loc_x());
+	      mDTO.put("ss_loc_y", pDTO.getSs_loc_y());
+	      mDTO.put("ss_val_g_val", pDTO.getSs_val_g_val());
+	      mDTO.put("ss_val_temp_val", pDTO.getSs_val_temp_val());
+	      mDTO.put("ss_val_temp_val_p", pDTO.getSs_val_temp_val_p());
+	      return mDTO;
 	   }
-	
-	
 
 }
