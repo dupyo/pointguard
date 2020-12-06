@@ -19,4 +19,6 @@ public interface ISensorMapper {
 	List<SensorInfoDTO> getSsValList(SensorInfoDTO pDTO) throws Exception;
 
 	SensorDTO receiveSensorData(SensorDTO sDTO) throws Exception;
+
+	int putSensorData(SensorDTO sDTO) throws Exception;
 }

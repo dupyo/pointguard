@@ -6,13 +6,21 @@ public class SensorInfoDTO {
 	private String mt_loc_x;
 	private String mt_loc_y;
 	private String mt_seq;
-	private double ss_val_co2_val;
-	private double ss_val_temp_val;
-	private double ss_val_hmd_val;
-	private double ss_val_g_val;
+	private String ss_val_co2_val;
+	private String ss_val_temp_val;
+	private String ss_val_hmd_val;
+	private String ss_val_g_val;
 	private String ss_loc_x;
 	private String ss_loc_y;
 	private String ss_id;
+	private String ss_val_rgdate;
+	
+	public String getSs_val_rgdate() {
+		return ss_val_rgdate;
+	}
+	public void setSs_val_rgdate(String ss_val_rgdate) {
+		this.ss_val_rgdate = ss_val_rgdate;
+	}
 	public String getSs_id() {
 		return ss_id;
 	}
@@ -40,33 +48,34 @@ public class SensorInfoDTO {
 	public String getMt_seq() {
 		return mt_seq;
 	}
+	public String getSs_val_co2_val() {
+		return ss_val_co2_val;
+	}
+	public void setSs_val_co2_val(String ss_val_co2_val) {
+		this.ss_val_co2_val = ss_val_co2_val;
+	}
+	public String getSs_val_temp_val() {
+		return ss_val_temp_val;
+	}
+	public void setSs_val_temp_val(String ss_val_temp_val) {
+		this.ss_val_temp_val = ss_val_temp_val;
+	}
+	public String getSs_val_hmd_val() {
+		return ss_val_hmd_val;
+	}
+	public void setSs_val_hmd_val(String ss_val_hmd_val) {
+		this.ss_val_hmd_val = ss_val_hmd_val;
+	}
+	public String getSs_val_g_val() {
+		return ss_val_g_val;
+	}
+	public void setSs_val_g_val(String ss_val_g_val) {
+		this.ss_val_g_val = ss_val_g_val;
+	}
 	public void setMt_seq(String mt_seq) {
 		this.mt_seq = mt_seq;
 	}
-	public double getSs_val_co2_val() {
-		return ss_val_co2_val;
-	}
-	public void setSs_val_co2_val(double ss_val_co2_val) {
-		this.ss_val_co2_val = ss_val_co2_val;
-	}
-	public double getSs_val_temp_val() {
-		return ss_val_temp_val;
-	}
-	public void setSs_val_temp_val(double ss_val_temp_val) {
-		this.ss_val_temp_val = ss_val_temp_val;
-	}
-	public double getSs_val_hmd_val() {
-		return ss_val_hmd_val;
-	}
-	public void setSs_val_hmd_val(double ss_val_hmd_val) {
-		this.ss_val_hmd_val = ss_val_hmd_val;
-	}
-	public double getSs_val_g_val() {
-		return ss_val_g_val;
-	}
-	public void setSs_val_g_val(double ss_val_g_val) {
-		this.ss_val_g_val = ss_val_g_val;
-	}
+	
 	public String getSs_loc_x() {
 		return ss_loc_x;
 	}

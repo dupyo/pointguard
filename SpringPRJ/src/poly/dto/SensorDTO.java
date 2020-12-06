@@ -6,24 +6,57 @@ public class SensorDTO {
    private double hmd_pptcn;
    private double co2_maxchg;
    private double temp_maxchg;
-   public String getSs_id() {
-      return ss_id;
-   }
-   public void setSs_id(String ss_id) {
-      this.ss_id = ss_id;
-   }
+   private double i_danger;
+   private double ss_val_g_val;
+   private double weightval;
+   private String ss_val_rgdate;
    private double hmd_maxchg;
    private double co2_nowval;
-   private double temp_nowval;
    private double hmd_nowval;
    private double co2_pastval;
-   private double temp_pastval;
    private double hmd_pastval;
    private double i_warning;
    private double co2_weight;
    private double temp_weight;
    private String ss_id;
    private String ss_val_seq;
+   private String ss_loc_x;
+   private String ss_loc_y;
+   private double temp_nowval;
+   private double temp_pastval;
+   private double ss_val_temp_val_p;
+   private double ss_val_temp_val;
+   
+   public double getSs_val_temp_val_p() {
+      return ss_val_temp_val_p;
+   }
+   public void setSs_val_temp_val_p(double ss_val_temp_val_p) {
+      this.ss_val_temp_val_p = ss_val_temp_val_p;
+   }
+   public double getSs_val_temp_val() {
+      return ss_val_temp_val;
+   }
+   public void setSs_val_temp_val(double ss_val_temp_val) {
+      this.ss_val_temp_val = ss_val_temp_val;
+   }
+   public String getSs_loc_x() {
+      return ss_loc_x;
+   }
+   public void setSs_loc_x(String ss_loc_x) {
+      this.ss_loc_x = ss_loc_x;
+   }
+   public String getSs_loc_y() {
+      return ss_loc_y;
+   }
+   public void setSs_loc_y(String ss_loc_y) {
+      this.ss_loc_y = ss_loc_y;
+   }
+   public String getSs_id() {
+      return ss_id;
+   }
+   public void setSs_id(String ss_id) {
+      this.ss_id = ss_id;
+   }
    
    public String getSs_val_seq() {
       return ss_val_seq;
@@ -147,18 +180,14 @@ public class SensorDTO {
    public void setWeightval(double weightval) {
       this.weightval = weightval;
    }
-   private double i_danger;
-   private double ss_val_g_val;
-   private double weightval;
-   public double getG() {
-	return g;
-}
-public void setG(double g) {
-	this.g = g;
-}
-private double g;
-	
-	
-}
+   
+   public String getSs_val_rgdate() {
+      return ss_val_rgdate;
+   }
+   public void setSs_val_rgdate(String ss_val_rgdate) {
+      this.ss_val_rgdate = ss_val_rgdate;
+   }
    
    
+   
+}

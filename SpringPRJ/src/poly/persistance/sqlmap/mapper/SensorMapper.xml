@@ -25,19 +25,83 @@
 	SELECT SS_VAL_CO2_VAL,
 		   SS_VAL_TEMP_VAL,
 		   SS_VAL_HMD_VAL,
-		   SS_VAL_G_VAL
+		   SS_VAL_G_VAL,
+		   SS_ID,
+		   SS_VAL_RGDATE
 	FROM pointguard.sensor_val
 	where SS_ID=#{ss_id}
+	order by SS_VAL_RGDATE DESC
 	</select>
    <select id="receiveSensorData" resultType="SensorDTO" parameterType="SensorDTO">
-      SELECT SS_VAL_G_VAL
-      FROM pointguard.sensor_val
-      WHERE 
-         SS_ID = #{ss_id}
-      AND
-         SS_VAL_SEQ = #{ss_val_seq}
+	SELECT
+   		A.SS_LOC_X,
+   		A.SS_LOC_Y,
+    	A.SS_VAL_G_VAL,
+    	A.SS_VAL_TEMP_VAL,
+    	A.SS_VAL_TEMP_VAL_P,
+    	A.SS_VAL_SEQ
+	FROM
+		(SELECT 
+   			SI.SS_LOC_X,
+    		SI.SS_LOC_Y,
+    		SV.SS_VAL_G_VAL,
+    		SV.SS_VAL_TEMP_VAL,
+    		SV.SS_VAL_TEMP_VAL_P,
+    		SV.SS_VAL_SEQ
+		FROM
+   			SENSOR_INFO SI LEFT JOIN SENSOR_VAL SV
+		ON SI.SS_ID = SV.SS_ID
+		WHERE SV.SS_ID = #{ss_id}
+
+		UNION
+
+		SELECT
+    		SI.SS_LOC_X,
+    		SI.SS_LOC_Y,
+    		SV.SS_VAL_G_VAL,
+    		SV.SS_VAL_TEMP_VAL,
+    		SV.SS_VAL_TEMP_VAL_P,
+   			SV.SS_VAL_SEQ
+		FROM
+   			SENSOR_VAL SV 
+		RIGHT JOIN SENSOR_INFO SI
+		ON SV.SS_ID= SI.SS_ID
+		WHERE SV.SS_ID = #{ss_id}
+		)
+	A ORDER BY A.SS_VAL_SEQ DESC LIMIT 1
    </select>
-	
-	
-	
+
+   
+   <!-- 센서값 넣기 -->
+	<insert id="putSensorData" parameterType="SensorDTO">
+      INSERT INTO SENSOR_VAL
+      (
+         SS_VAL_CO2_VAL,
+           SS_VAL_TEMP_VAL,
+           SS_VAL_HMD_VAL,
+           SS_VAL_CO2_VAL_P,
+           SS_VAL_TEMP_VAL_P,
+           SS_VAL_HMD_VAL_P,
+           SS_VAL_I_WARN,
+           SS_VAL_I_DANGER,
+           SS_VAL_G_VAL,
+           SS_ID,
+           SS_VAL_RGDATE
+       )
+       VALUES
+       (
+          #{co2_nowval},
+          #{temp_nowval},
+          #{hmd_nowval},
+          #{co2_pastval},
+          #{temp_pastval},
+          #{hmd_pastval},
+          #{i_warning},
+          #{i_danger},
+          #{ss_val_g_val},
+          #{ss_id},
+          now()+0
+       )
+   </insert>
+   
 </mapper>

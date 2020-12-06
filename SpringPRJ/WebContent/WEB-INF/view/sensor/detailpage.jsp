@@ -27,8 +27,9 @@
 	content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="">
 <meta name="author" content="">
-<script src="/js/echarts.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="/js/echarts.min.js"></script>
+
 <title>산불 예방 시스템</title>
 
 <!-- Custom fonts for this template-->
@@ -40,7 +41,27 @@
 <!-- Custom styles for this template-->
 <link href="/yjcss/css/sb-admin-2.css" rel="stylesheet">
 <script>
+   var bgc = "#ffffff";
+   var bgc2 = "#ffffff";
+   var bgc3 = "#ffffff";
+   var sensor1_ss_val_g_val = 0;
+   var sensor2_ss_val_g_val = 0;
+   var sensor1_ss_loc_x = 0;
+   var sensor1_ss_loc_y = 0;
+   var sensor1_ss_val_temp_val = 0;
+   var sensor1_ss_val_temp_val_p = 0;
+   var sensor2_ss_loc_x = 0;
+   var sensor2_ss_loc_y = 0;
+   var sensor2_ss_val_temp_val = 0;
+   var sensor2_ss_val_temp_val_p = 0;
+   var fire_loc_x = 0;
+   var fire_loc_y = 0;
+   var firedist = 0;
+   var dist = 0;
+</script>
+<script>
 	function search(name){
+		console.log(name);
 		if(name.length ==0){
 			$(name).focus();
 			alert("no data");
@@ -49,36 +70,9 @@
 		  $.ajax({
 			url : '/sensor/sensorDataList.do',
 			type : 'post',
-			data : {name : name},
+			data : {"name" : name},
 			success : function(data) {
-				var resHTML = '';
-				console.log(data);
-				if (data.length == 0) {
-					resHTML += '<div class="ajax_div_content_box">검색결과가 없습니다.</div>';
-				}
-				resHTML += '<div class="cotianer">';
-				resHTML += '<div class="item">co2</div>';
-				resHTML += '<div class="item">temp</div>';
-				resHTML += '<div class="item">humidity</div>';
-				resHTML += '<div class="item">G_Value</div>';
-				resHTML += '</div>'
-				for (var i = data.length; i > data.length -10; i--) {
-					resHTML += '<div class="trow" style="display : table-row;">';
-					resHTML += '<div class="ajax_div_content_box">'
-					        +data[i].getSs_val_co2_val
-					        +'</div>';
-					resHTML += '<div class="ajax_div_content_box">'
-					        +data[i].ss_val_temp_val
-					        +'</div>';
-					resHTML += '<div class="ajax_div_content_box">'
-							+data[i].ss_val_hmd_val
-							+'</div>';
-					resHTML += '<div class="ajax_div_content_box">'
-							+data[i].ss_val_g_val
-							+'</div>';
-					resHTML +='</div>';
-				}
-				$("#resContainer").html(resHTML);
+				$("#resContainer").html(data);
 			},
 			error:function (e){
 				alert("err");
@@ -87,9 +81,7 @@
 		}) 
 	}
 </script>
- 
 </head>
-
 <body id="page-top">
 
 	<!-- Page Wrapper -->
@@ -191,30 +183,49 @@
 								<div class="dropdown no-arrow">
 									<div id="map" style="width: 100%; height: 400px;"></div>
 
-									<script type="text/javascript"
-										src="//dapi.kakao.com/v2/maps/sdk.js?appkey=767d28fae545a0f72f93cd6018b21d63"></script>
+									<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a398788e01a2ef914dd4ccba0bb6e698"></script>
 									<script>
-										
-											var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
-											mapOption = {
-												center : new kakao.maps.LatLng(
-														<%=request.getAttribute("M_Loc_x") %>, <%=request.getAttribute("M_Loc_y") %>), // 지도의 중심좌표
-												level : 2
-											// 지도의 확대 레벨
-											};
-
-											// 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
-											var map = new kakao.maps.Map(mapContainer, mapOption);
-											
-											var markerPosition  = new kakao.maps.LatLng(<%=request.getAttribute("SS_Loc_x") %>, <%=request.getAttribute("SS_Loc_y") %>); 
-
+									var mapContainer = document.getElementById('map'), // 지도를 표시할 div 
+									    mapOption = { 
+									        center: new kakao.maps.LatLng(<%=request.getAttribute("M_Loc_x") %>, <%=request.getAttribute("M_Loc_y") %>), // 지도의 중심좌표
+									        level: 2 // 지도의 확대 레벨
+									    };
+									var map = new kakao.maps.Map(mapContainer, mapOption); 
+									
+											var positions = [
+																
+															    {
+															        title: '<%=CmmUtil.nvl(sList.get(0).getSs_id())%>', 
+															        latlng: new kakao.maps.LatLng(<%=CmmUtil.nvl(sList.get(0).getSs_loc_x())%>,<%=CmmUtil.nvl(sList.get(0).getSs_loc_y())%>)
+															    },
+															    {
+															        title: '<%=CmmUtil.nvl(sList.get(1).getSs_id())%>', 
+															        latlng: new kakao.maps.LatLng(<%=CmmUtil.nvl(sList.get(1).getSs_loc_x())%>,<%=CmmUtil.nvl(sList.get(1).getSs_loc_y())%>)
+															    },
+															    {
+															        title: '<%=CmmUtil.nvl(sList.get(2).getSs_id())%>', 
+															        latlng: new kakao.maps.LatLng(<%=CmmUtil.nvl(sList.get(2).getSs_loc_x())%>,<%=CmmUtil.nvl(sList.get(2).getSs_loc_y())%>)
+															    }
+															    
+															];
 											// 마커를 생성합니다
-											var marker = new kakao.maps.Marker({
-											    position: markerPosition
-											});
-
-											// 마커가 지도 위에 표시되도록 설정합니다
-											marker.setMap(map);
+											var imageSrc = "https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png"; 
+													for (var i = 0; i < positions.length; i ++) {
+													    
+													    // 마커 이미지의 이미지 크기 입니다
+													    var imageSize = new kakao.maps.Size(24, 35); 
+													    
+													    // 마커 이미지를 생성합니다    
+													    var markerImage = new kakao.maps.MarkerImage(imageSrc, imageSize); 
+													    
+													    // 마커를 생성합니다
+													    var marker = new kakao.maps.Marker({
+													        map: map, // 마커를 표시할 지도
+													        position: positions[i].latlng, // 마커를 표시할 위치
+													        title : positions[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+													        image : markerImage // 마커 이미지 
+													    });
+													}
 										</script>
 								</div>
 							</div>
@@ -230,14 +241,9 @@
 							<!-- Card Body -->
 							<div class="card-body">
 								<div class="row">
-									<div class="col-6 col-md-4"> <div id="main" style="width: 200px;height:300px;"></div></div>
-									<div class="col-6 col-md-4"> <div id="main2" style="width: 200px;height:300px;"></div></div>
-									<div class="col-6 col-md-4"> <div id="main3" style="width: 200px;height:300px;"></div></div>
-								</div>
-								<div class="row">
-									<div class="col-6 col-md-4"> <div id="main4" style="width: 200px;height:300px;"></div></div>
-									<div class="col-6 col-md-4"> <div id="main5" style="width: 200px;height:300px;"></div></div>
-									<div class="col-6 col-md-4"> <div id="main6" style="width: 200px;height:300px;"></div></div>
+									<div class="col-6 col-md-4"> <div id="main" style="width: 200px;height:300px;background-color:#ffffff;"></div></div>
+									<div class="col-6 col-md-4"> <div id="main2" style="width: 200px;height:300px;background-color:#ffffff;"></div></div>
+									<div class="col-6 col-md-4"> <div id="main3" style="width: 200px;height:300px;background-color:#ffffff;"></div></div>
 								</div>
 							</div>
 						</div>
@@ -245,17 +251,16 @@
 				</div>
 			<div class="card-body">
 			<%for(int i=0; i < sList.size(); i++){ %>
-				<a href="JavaScript:search('<%=CmmUtil.nvl(sList.get(i).getSs_id()) %>');" name="<%=CmmUtil.nvl(sList.get(i).getSs_id()) %>"; class="btn btn-success btn-circle"><%= i+1 %></a>
+				<a href="JavaScript:search('<%=CmmUtil.nvl(sList.get(i).getSs_id()) %>');"  class="btn btn-success btn-circle"><%= i+1 %></a>
 			<%} %>
 			</div>
+			<div id="resContainer"> </div>
 			</div>
 		</div>
 		<script type="text/javascript">
         // based on prepared DOM, initialize echarts instance
         var myChart = echarts.init(document.getElementById('main'));
-        var seq = 30;
-
-        var option2 = {
+        var option = {
               title: {
                    text: '센서_1',
                },
@@ -277,7 +282,7 @@
                         var len = 7;
                         while (len--) {
                             res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
-                            now = new Date(now-2000);
+                            now = new Date(now-60000);
                         }
                         return res;
                     })()
@@ -302,27 +307,63 @@
                    smooth: true,
                    data: (function (){
                         var res = [];
-                        var len = 20;
+                        var len = 8;
                         while (len--) {
-                            res.push(Math.round(Math.random()*100)/100.0); /* //랜덤  데이터생성 */
+                            res.push(Math.round(Math.random()*100)/100.0);
                         }
                         return res;
                     })()
-               }]
+               },
+               {
+                    name: '경고값',
+                    type: 'line',
+                    lineStyle:{
+                    color:'#D7DF01' //line차트 색상 변경
+                 },
+                    smooth: true, //부드러운 line 표현
+                    yAxisIndex: 0, //yAxis 1번째 사용
+                    data: (function (){
+                        var res = [];
+                        var len = 0;
+                        while (len < 20) {
+                            res.push(1.8); //랜덤 데이터 생성
+                            len++;
+                        }
+                        return res;
+                    })()
+                    , symbol : "none"},
+                    {
+                        name: '위험값',
+                        type: 'line',
+                        lineStyle:{
+                        color:'#DF0101' //line차트 색상 변경
+                     },
+                        smooth: true, //부드러운 line 표현
+                        yAxisIndex: 0, //yAxis 1번째 사용
+                        data: (function (){
+                            var res = [];
+                            var len = 0;
+                            while (len < 20) {
+                                res.push(3.6); //랜덤 데이터 생성
+                                len++;
+                            }
+                            return res;
+                        })()
+                        , symbol : "none"}]
            };
 
-           myChart.setOption(option2);
+           myChart.setOption(option);
 
            setInterval(function (){
               //x축에 실시간 데이터 생성
                var axisData = (new Date()).toLocaleTimeString().replace(/^\D*/, '');
 
-               var data0 = option2.series[0].data; //순수익 데이터
-
+               var data0 = option.series[0].data; //순수익 데이터
+               
                //데이터의 가장 왼쪽 값을 제거
                data0.shift();
-               //데이터의 가장 오른쪽 값을 추가
-               //data0.push(Math.round(Math.random() * 100)/100.0);
+               
+               var mainObj = document.getElementById("main");
             //ajax 구문 추가
             $.ajax({
                url : "/sensor/receiveSensorData.do?ss_id=woojang_1&ss_val_seq="+seq,
@@ -330,8 +371,27 @@
                dataType : "json",
                contentType : "application/json; charset=UTF-8",
                success : function(json){
-                  data0.push(json);
-                  seq++;
+            	   data0.push(json.ss_val_g_val);
+            	   if (json.ss_val_g_val < 1.8) {
+                       bgc2 = "#ffffff";
+                    }
+                    else if (json.ss_val_g_val >= 1.8 && json < 3.6) {
+                       bgc2 = "#fff091";
+                    }
+                    else if (json.ss_val_g_val >= 3.6) {
+                       bgc2 = "#ffa6a6";
+                    }
+
+            	   mainObj.style.backgroundColor = bgc2;
+                   sensor1_ss_loc_x = json.ss_loc_x*1000000;
+                   sensor1_ss_loc_y = json.ss_loc_y*1000000;
+                   sensor1_ss_val_temp_val = json.ss_val_temp_val;
+                   sensor1_ss_val_temp_val_p = json.ss_val_temp_val_p;
+                   sensor1_ss_val_g_val = json.ss_val_g_val;
+                   console.log(sensor1_ss_loc_x);
+                   console.log(sensor1_ss_loc_y);
+                   
+                   fireloc()
                },
                error:function() {
                   alert("err");
@@ -339,18 +399,19 @@
             })
                
               //x축에 시간 데이터 추가
-               option2.xAxis.data.shift();
-               option2.xAxis.data.push(axisData);
+               option.xAxis.data.shift();
+               option.xAxis.data.push(axisData);
 
               //차트에 반영
-               myChart.setOption(option2);
-           }, 2000);
+               myChart.setOption(option);
+           }, 10010);
     </script>
+    
+    <!--==================================================================================================================================  -->
     <script type="text/javascript">
         // based on prepared DOM, initialize echarts instance
         var myChart2 = echarts.init(document.getElementById('main2'));
-        var seq = 30;
-
+        var seq = 480;
         var option2 = {
               title: {
                    text: '센서_2',
@@ -373,7 +434,7 @@
                         var len = 7;
                         while (len--) {
                             res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
-                            now = new Date(now-2000);
+                            now = new Date(now-60000);
                         }
                         return res;
                     })()
@@ -398,13 +459,49 @@
                    smooth: true,
                    data: (function (){
                         var res = [];
-                        var len = 20;
+                        var len = 8;
                         while (len--) {
                             res.push(Math.round(Math.random()*100)/100.0);
                         }
                         return res;
                     })()
-               }]
+               },
+               {
+                    name: '경고값',
+                    type: 'line',
+                    lineStyle:{
+                    color:'#D7DF01' //line차트 색상 변경
+                 },
+                    smooth: true, //부드러운 line 표현
+                    yAxisIndex: 0, //yAxis 1번째 사용
+                    data: (function (){
+                        var res = [];
+                        var len = 0;
+                        while (len < 20) {
+                            res.push(1.8); //랜덤 데이터 생성
+                            len++;
+                        }
+                        return res;
+                    })()
+                    , symbol : "none"},
+                    {
+                        name: '위험값',
+                        type: 'line',
+                        lineStyle:{
+                        color:'#DF0101' //line차트 색상 변경
+                     },
+                        smooth: true, //부드러운 line 표현
+                        yAxisIndex: 0, //yAxis 1번째 사용
+                        data: (function (){
+                            var res = [];
+                            var len = 0;
+                            while (len < 20) {
+                                res.push(3.6); //랜덤 데이터 생성
+                                len++;
+                            }
+                            return res;
+                        })()
+                        , symbol : "none"}]
            };
 
            myChart2.setOption(option2);
@@ -412,22 +509,39 @@
            setInterval(function (){
               //x축에 실시간 데이터 생성
                var axisData2 = (new Date()).toLocaleTimeString().replace(/^\D*/, '');
-
                var data2 = option2.series[0].data; //순수익 데이터
 
                //데이터의 가장 왼쪽 값을 제거
                data2.shift();
-               //데이터의 가장 오른쪽 값을 추가
-               //data0.push(Math.round(Math.random() * 100)/100.0);
+               
+               var main2Obj = document.getElementById("main2");
             //ajax 구문 추가
-            $.ajax({
-               url : "/sensor/receiveSensorData.do?ss_id=woojang_1&ss_val_seq="+seq,
+           $.ajax({
+               url : "/sensor/receiveSensorData.do?ss_id=woojang_2&ss_val_seq="+seq,
                type : "post",
                dataType : "json",
                contentType : "application/json; charset=UTF-8",
                success : function(json){
-                  data2.push(json);
-                  seq++;
+            	   data2.push(json.ss_val_g_val);
+                   if (json.ss_val_g_val < 1.8) {
+                      bgc2 = "#ffffff";
+                   }
+                   else if (json.ss_val_g_val >= 1.8 && json < 3.6) {
+                      bgc2 = "#fff091";
+                   }
+                   else if (json.ss_val_g_val >= 3.6) {
+                      bgc2 = "#ffa6a6";
+                   }
+                   main2Obj.style.backgroundColor = bgc2;
+                   
+                   sensor2_ss_loc_x = json.ss_loc_x*1000000;
+                   sensor2_ss_loc_y = json.ss_loc_y*1000000;
+                   sensor2_ss_val_temp_val = json.ss_val_temp_val;
+                   sensor2_ss_val_temp_val_p = json.ss_val_temp_val_p;
+                   sensor2_ss_val_g_val = json.ss_val_g_val;
+                   console.log(sensor2_ss_loc_x);
+                   console.log(sensor2_ss_loc_y);
+
                },
                error:function() {
                   alert("err");
@@ -440,18 +554,17 @@
 
               //차트에 반영
                myChart2.setOption(option2);
-           }, 2000);
+           }, 10000);
+           
     </script>
-    
-    <!--*********************************************************************  -->
-    <script type="text/javascript">
+<!-- =============================================================================================== -->
+   <script type="text/javascript">
         // based on prepared DOM, initialize echarts instance
         var myChart3 = echarts.init(document.getElementById('main3'));
-        var seq = 30;
-
+        var seq = 480;
         var option3 = {
               title: {
-                   text: '센서_2',
+                   text: '센서_3',
                },
                tooltip: {
                    trigger: 'axis',
@@ -471,7 +584,7 @@
                         var len = 7;
                         while (len--) {
                             res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
-                            now = new Date(now-2000);
+                            now = new Date(now-60000);
                         }
                         return res;
                     })()
@@ -496,13 +609,49 @@
                    smooth: true,
                    data: (function (){
                         var res = [];
-                        var len = 20;
+                        var len = 8;
                         while (len--) {
                             res.push(Math.round(Math.random()*100)/100.0);
                         }
                         return res;
                     })()
-               }]
+               },
+               {
+                    name: '경고값',
+                    type: 'line',
+                    lineStyle:{
+                    color:'#D7DF01' //line차트 색상 변경
+                 },
+                    smooth: true, //부드러운 line 표현
+                    yAxisIndex: 0, //yAxis 1번째 사용
+                    data: (function (){
+                        var res = [];
+                        var len = 0;
+                        while (len < 20) {
+                            res.push(1.8); //랜덤 데이터 생성
+                            len++;
+                        }
+                        return res;
+                    })()
+                    , symbol : "none"},
+                    {
+                        name: '위험값',
+                        type: 'line',
+                        lineStyle:{
+                        color:'#DF0101' //line차트 색상 변경
+                     },
+                        smooth: true, //부드러운 line 표현
+                        yAxisIndex: 0, //yAxis 1번째 사용
+                        data: (function (){
+                            var res = [];
+                            var len = 0;
+                            while (len < 20) {
+                                res.push(3.6); //랜덤 데이터 생성
+                                len++;
+                            }
+                            return res;
+                        })()
+                        , symbol : "none"}]
            };
 
            myChart3.setOption(option3);
@@ -510,22 +659,30 @@
            setInterval(function (){
               //x축에 실시간 데이터 생성
                var axisData3 = (new Date()).toLocaleTimeString().replace(/^\D*/, '');
-
                var data3 = option3.series[0].data; //순수익 데이터
 
                //데이터의 가장 왼쪽 값을 제거
                data3.shift();
-               //데이터의 가장 오른쪽 값을 추가
-               //data0.push(Math.round(Math.random() * 100)/100.0);
+               
+               var main3Obj = document.getElementById("main3");
             //ajax 구문 추가
-            $.ajax({
-               url : "/sensor/receiveSensorData.do?ss_id=woojang_1&ss_val_seq="+seq,
+           $.ajax({
+               url : "/sensor/receiveSensorData.do?ss_id=woojang_3&ss_val_seq="+seq,
                type : "post",
                dataType : "json",
                contentType : "application/json; charset=UTF-8",
                success : function(json){
-                  data3.push(json);
-                  seq++;
+            	   data3.push(json.ss_val_g_val);
+                   if (json.ss_val_g_val < 1.8) {
+                      bgc3 = "#ffffff";
+                   }
+                   else if (json.ss_val_g_val >= 1.8 && json < 3.6) {
+                      bgc3 = "#fff091";
+                   }
+                   else if (json.ss_val_g_val >= 3.6) {
+                      bgc3 = "#ffa6a6";
+                   }
+                   main3Obj.style.backgroundColor = bgc3;
                },
                error:function() {
                   alert("err");
@@ -538,298 +695,50 @@
 
               //차트에 반영
                myChart3.setOption(option3);
-           }, 2000);
+           }, 10000);
+           
     </script>
-    <!--*********************************************************************  -->
-    <script type="text/javascript">
-        // based on prepared DOM, initialize echarts instance
-        var myChart4 = echarts.init(document.getElementById('main4'));
-        var seq = 30;
-
-        var option4 = {
-              title: {
-                   text: '센서_2',
-               },
-               tooltip: {
-                   trigger: 'axis',
-                   axisPointer: {
-                       type: 'cross',
-                       label: {
-                           backgroundColor: '#283b56'
-                       }
-                   }
-               },
-               xAxis: {
-                   type: 'category',
-                   boundaryGap: true,
-                    data: (function (){
-                        var now = new Date();
-                        var res = [];
-                        var len = 7;
-                        while (len--) {
-                            res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
-                            now = new Date(now-2000);
-                        }
-                        return res;
-                    })()
-               },
-               dataZoom: {
-                   show: false,
-                   start: 0,
-                   end: 100
-               },
-               yAxis: {
-                   type: 'value',
-                   scale : true,
-                   max : 5,
-                   min : 0,
-               },
-               series: [{
-                  name : 'G값',
-                   type: 'line',
-                   lineStyle : {
-                      color:'#2A265C'
-                   },
-                   smooth: true,
-                   data: (function (){
-                        var res = [];
-                        var len = 20;
-                        while (len--) {
-                            res.push(Math.round(Math.random()*100)/100.0);
-                        }
-                        return res;
-                    })()
-               }]
-           };
-
-           myChart4.setOption(option4);
-
-           setInterval(function (){
-              //x축에 실시간 데이터 생성
-               var axisData4 = (new Date()).toLocaleTimeString().replace(/^\D*/, '');
-
-               var data4 = option4.series[0].data; //순수익 데이터
-
-               //데이터의 가장 왼쪽 값을 제거
-               data4.shift();
-               //데이터의 가장 오른쪽 값을 추가
-               //data0.push(Math.round(Math.random() * 100)/100.0);
-            //ajax 구문 추가
-            $.ajax({
-               url : "/sensor/receiveSensorData.do?ss_id=woojang_1&ss_val_seq="+seq,
-               type : "post",
-               dataType : "json",
-               contentType : "application/json; charset=UTF-8",
-               success : function(json){
-                  data4.push(json);
-                  seq++;
-               },
-               error:function() {
-                  alert("err");
-               }
-            })
-               
-              //x축에 시간 데이터 추가
-               option4.xAxis.data.shift();
-               option4.xAxis.data.push(axisData4);
-
-              //차트에 반영
-               myChart4.setOption(option4);
-           }, 2000);
-    </script>
-    <!--*********************************************************************  -->
-    <script type="text/javascript">
-        // based on prepared DOM, initialize echarts instance
-        var myChart5 = echarts.init(document.getElementById('main5'));
-        var seq = 30;
-
-        var option5 = {
-              title: {
-                   text: '센서_2',
-               },
-               tooltip: {
-                   trigger: 'axis',
-                   axisPointer: {
-                       type: 'cross',
-                       label: {
-                           backgroundColor: '#283b56'
-                       }
-                   }
-               },
-               xAxis: {
-                   type: 'category',
-                   boundaryGap: true,
-                    data: (function (){
-                        var now = new Date();
-                        var res = [];
-                        var len = 7;
-                        while (len--) {
-                            res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
-                            now = new Date(now-2000);
-                        }
-                        return res;
-                    })()
-               },
-               dataZoom: {
-                   show: false,
-                   start: 0,
-                   end: 100
-               },
-               yAxis: {
-                   type: 'value',
-                   scale : true,
-                   max : 5,
-                   min : 0,
-               },
-               series: [{
-                  name : 'G값',
-                   type: 'line',
-                   lineStyle : {
-                      color:'#2A265C'
-                   },
-                   smooth: true,
-                   data: (function (){
-                        var res = [];
-                        var len = 20;
-                        while (len--) {
-                            res.push(Math.round(Math.random()*100)/100.0);
-                        }
-                        return res;
-                    })()
-               }]
-           };
-
-           myChart5.setOption(option5);
-
-           setInterval(function (){
-              //x축에 실시간 데이터 생성
-               var axisData5 = (new Date()).toLocaleTimeString().replace(/^\D*/, '');
-
-               var data5 = option5.series[0].data; //순수익 데이터
-
-               //데이터의 가장 왼쪽 값을 제거
-               data5.shift();
-               //데이터의 가장 오른쪽 값을 추가
-               //data0.push(Math.round(Math.random() * 100)/100.0);
-            //ajax 구문 추가
-            $.ajax({
-               url : "/sensor/receiveSensorData.do?ss_id=woojang_1&ss_val_seq="+seq,
-               type : "post",
-               dataType : "json",
-               contentType : "application/json; charset=UTF-8",
-               success : function(json){
-                  data5.push(json);
-                  seq++;
-               },
-               error:function() {
-                  alert("err");
-               }
-            })
-               
-              //x축에 시간 데이터 추가
-               option5.xAxis.data.shift();
-               option5.xAxis.data.push(axisData5);
-
-              //차트에 반영
-               myChart5.setOption(option5);
-           }, 2000);
-    </script>
-    <!--*********************************************************************  -->
-    <script type="text/javascript">
-        // based on prepared DOM, initialize echarts instance
-        var myChart6 = echarts.init(document.getElementById('main6'));
-        var seq = 30;
-
-        var option6 = {
-              title: {
-                   text: '센서_2',
-               },
-               tooltip: {
-                   trigger: 'axis',
-                   axisPointer: {
-                       type: 'cross',
-                       label: {
-                           backgroundColor: '#283b56'
-                       }
-                   }
-               },
-               xAxis: {
-                   type: 'category',
-                   boundaryGap: true,
-                    data: (function (){
-                        var now = new Date();
-                        var res = [];
-                        var len = 7;
-                        while (len--) {
-                            res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
-                            now = new Date(now-2000);
-                        }
-                        return res;
-                    })()
-               },
-               dataZoom: {
-                   show: false,
-                   start: 0,
-                   end: 100
-               },
-               yAxis: {
-                   type: 'value',
-                   scale : true,
-                   max : 5,
-                   min : 0,
-               },
-               series: [{
-                  name : 'G값',
-                   type: 'line',
-                   lineStyle : {
-                      color:'#2A265C'
-                   },
-                   smooth: true,
-                   data: (function (){
-                        var res = [];
-                        var len = 20;
-                        while (len--) {
-                            res.push(Math.round(Math.random()*100)/100.0);
-                        }
-                        return res;
-                    })()
-               }]
-           };
-
-           myChart6.setOption(option6);
-
-           setInterval(function (){
-              //x축에 실시간 데이터 생성
-               var axisData6 = (new Date()).toLocaleTimeString().replace(/^\D*/, '');
-
-               var data6 = option6.series[0].data; //순수익 데이터
-
-               //데이터의 가장 왼쪽 값을 제거
-               data6.shift();
-               //데이터의 가장 오른쪽 값을 추가
-               //data0.push(Math.round(Math.random() * 100)/100.0);
-            //ajax 구문 추가
-            $.ajax({
-               url : "/sensor/receiveSensorData.do?ss_id=woojang_1&ss_val_seq="+seq,
-               type : "post",
-               dataType : "json",
-               contentType : "application/json; charset=UTF-8",
-               success : function(json){
-                  data6.push(json);
-                  seq++;
-               },
-               error:function() {
-                  alert("err");
-               }
-            })
-               
-              //x축에 시간 데이터 추가
-               option6.xAxis.data.shift();
-               option6.xAxis.data.push(axisData6);
-
-              //차트에 반영
-               myChart6.setOption(option6);
-           }, 2000);
+    
+    <script>
+    	function divreload() {
+    		$('map').load(window.location.href + '#map');
+    	}
+    	function fireloc() {
+        	if(sensor1_ss_val_g_val >3.5 && sensor2_ss_val_g_val > 3.5) {
+          	dist = Math.sqrt(Math.abs(Math.pow(sensor1_ss_loc_x - sensor2_ss_loc_x,2)-Math.pow(sensor1_ss_loc_y - sensor2_ss_loc_y,2)));
+           console.log("dist : " + dist);
+           console.log(Math.sqrt(Math.abs(Math.pow(sensor1_ss_loc_x - sensor2_ss_loc_x,2)-Math.pow(sensor1_ss_loc_y - sensor2_ss_loc_y,2))));
+           console.log(Math.pow(sensor1_ss_loc_y - sensor2_ss_loc_y,2));
+           console.log(Math.pow(sensor1_ss_loc_x - sensor2_ss_loc_x,2));
+           dist = dist/(sensor1_ss_val_temp_val - sensor1_ss_val_temp_val_p + sensor2_ss_val_temp_val - sensor2_ss_val_temp_val_p);
+           firedist = dist * (sensor2_ss_val_temp_val - sensor2_ss_val_temp_val_p);
+           fire_loc_x = Math.abs(sensor1_ss_loc_x-(Math.round(firedist/Math.sqrt(2))))/1000000+0.000797;
+           fire_loc_y = Math.abs(sensor1_ss_loc_y-(Math.round(firedist/Math.sqrt(2))))/1000000;
+       
+          
+           console.log("firedist : " + firedist);
+           console.log("fire_loc_x : " + fire_loc_x);
+           console.log("fire_loc_y : " + fire_loc_y);
+           
+           /*  */
+			var circle = new kakao.maps.Circle({
+			map: map, // 원을 표시할 지도 객체
+			center : new kakao.maps.LatLng(fire_loc_x, fire_loc_y), // 지도의 중심 좌표
+			radius : 3, // 원의 반지름 (단위 : m)
+			fillColor: '#FF0000', // 채움 색
+			fillOpacity: 0.5, // 채움 불투명도
+			strokeWeight: 3, // 선의 두께
+			strokeColor: '#FF0000', // 선 색
+			strokeOpacity: 0.9, // 선 투명도 
+			strokeStyle: 'solid' // 선 스타일
+			});	
+			/*  */
+			
+			divreload()
+           
+           
+       }
+    }
     </script>
 </body>
 </html>
