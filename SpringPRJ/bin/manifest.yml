@@ -1,0 +1,10 @@
+---
+applications:
+- name: pointguard
+  memory: 1024M
+  host: pointguard
+  path: ./target/SpringPRJ-1.0.2.war
+  buildpack: java_buildpack
+env:
+  JAVA_OPTS: -Djava.security.egd=file:///dev/urandom
+  

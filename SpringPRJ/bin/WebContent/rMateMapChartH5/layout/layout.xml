@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <rMateMapChart>
+        <MapChart id="mainMap1" showDataTips="true" dataTipType="Type2">
+            <series>
+                <MapSeries id="mapseries" interactive="true" selectionMarking="color" color="#777777" labelPosition="none" displayName="Map" selectionStrokeAlpha="0" rollOverFill="transparent" transparentValue="60">
+                    <selectionFill>
+                        <SolidColor color="#ffffff" />
+                    </selectionFill>
+                    <selectionStroke>
+                        <Stroke color="#ffffff" weight="0" alpha="1"/>
+                    </selectionStroke>
+                    <rollOverStroke>
+                        <Stroke color="#ffffff" weight="0" alpha="1"/>
+                    </rollOverStroke>
+                    <showDataEffect>
+                        <SeriesInterpolate duration="1000"/>
+                    </showDataEffect>
+                </MapSeries>
+                <MapImageSeries id="image" labelField="label" imageUrlField="imgurl" horizontalCenterGapField="h" verticalCenterGapField="v" color="#ffffff" labelPosition="bottom" displayName="날씨" imageWidth="57" imageHeight="55" selectedFill="#0f0" interactive="false" disabledColor="#ffffff" areaCodeField="icode">
+                    <showDataEffect>
+                        <SeriesSlide duration="1000"/>
+                    </showDataEffect>
+                </MapImageSeries>
+            </series>
+        </MapChart>
+    </rMateMapChart>
