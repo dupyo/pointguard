@@ -2,7 +2,6 @@
 Servers/
 target/
 .settings/
-.classpath
 .project
 .recommenders/
 pom.xml
