@@ -6,7 +6,8 @@ target/
 .project
 .recommenders/
 pom.xml
-
+/bin/
+/target/
 LICENSE
 README.md
 bash.exe.stackdump
